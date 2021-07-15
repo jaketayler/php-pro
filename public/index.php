@@ -1,4 +1,4 @@
 <?php 
 
-echo "Hello Word!!";
+require 'bootstrap.php';
 
