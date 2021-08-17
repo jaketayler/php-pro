@@ -37,13 +37,15 @@ function params($uri, $matchedUri){
 }
 
 // Function to format parameters 
-function formatParams(){
+function formatParams($uri, $params){
 	$uri = explode('/', ltrim($uri,'/'));
 	$paramsData = [];
 	
 	foreach ($params as $index => $param) {
 		$paramsData[$uri[$index - 1]] = $param;				
 	}
+
+	return $paramsData;
 }
 
 // Function to validate routes in application
@@ -60,8 +62,9 @@ function router(){
 
 		if(!empty($matchedUri)){	
 			$params = params($uri,$matchedUri);
+			$params = formatParams($uri,$params);
 
-			var_dump($paramsData);
+			var_dump($params['user']);
 			die();
 		}
 	}
