@@ -29,7 +29,7 @@ function params($uri, $matchedUri){
 	if(!empty($matchedUri)){	
 		$matchedToGetParams = array_keys($matchedUri)[0];
 		return array_diff(
-			explode('/', ltrim($uri,'/')),
+			$uri,
 			explode('/', ltrim($matchedToGetParams,'/'))
 		);
 	}
@@ -38,7 +38,6 @@ function params($uri, $matchedUri){
 
 // Function to format parameters 
 function formatParams($uri, $params){
-	$uri = explode('/', ltrim($uri,'/'));
 	$paramsData = [];
 	
 	foreach ($params as $index => $param) {
@@ -49,6 +48,9 @@ function formatParams($uri, $params){
 }
 
 // Function to validate routes in application
+/**
+ * @throws Exception
+ */
 function router(){
 	
 	$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -57,18 +59,19 @@ function router(){
 
 	$matchedUri = exactMatchUriInArrayRoutes($uri, $routes);
 
+    $params = [];
 	if(empty($matchedUri)){
 		$matchedUri = regularExpressionnMatchArrayRoutes($uri,$routes);
-
-		if(!empty($matchedUri)){	
+			$uri = explode('/', ltrim($uri,'/'));
 			$params = params($uri,$matchedUri);
 			$params = formatParams($uri,$params);
-
-			var_dump($params['user']);
-			die();
-		}
 	}
 
-	var_dump($matchedUri);
-	die();
+	if(!empty($matchedUri)){
+		controller($matchedUri, $params);
+		return;
+
+	}
+
+	throw new Exception('Algo deu errado!!');
 }
